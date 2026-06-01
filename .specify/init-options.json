@@ -1,0 +1,15 @@
+{
+  "ai": "opencode",
+  "branch_numbering": "sequential",
+  "context_file": "AGENTS.md",
+  "here": false,
+  "integration": "opencode",
+  "script": "sh",
+  "speckit_version": "0.8.12",
+  "default_preset": "brownfield",
+  "brownfield": {
+    "enabled": true,
+    "profile": ".specify/brownfield-profile.md",
+    "auto_scan_on_init": true
+  }
+}

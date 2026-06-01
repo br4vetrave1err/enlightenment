@@ -1,0 +1,143 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  page {
+    background-color: #0a0e27;
+  }
+}
+
+@layer components {
+  /* Space background utilities */
+  .bg-void {
+    background-color: #050814;
+  }
+  .bg-cosmos {
+    background-color: #0a0e27;
+  }
+  .bg-nebula {
+    background-color: #1a1f4d;
+  }
+  .bg-deep-space {
+    background-color: #12163a;
+  }
+
+  /* Text colors */
+  .text-starlight {
+    color: #f0f4ff;
+  }
+  .text-starlight-muted {
+    color: #a0a8d0;
+  }
+  .text-starlight-dim {
+    color: #6b72a0;
+  }
+
+  /* Accent colors */
+  .text-solar {
+    color: #ffd700;
+  }
+  .text-mars {
+    color: #ff4500;
+  }
+  .text-cosmic {
+    color: #6b3fa0;
+  }
+  .text-aurora {
+    color: #00ff88;
+  }
+  .text-galaxy {
+    color: #ff6b9d;
+  }
+  .text-nebula-blue {
+    color: #4a90d9;
+  }
+
+  /* Status colors */
+  .bg-locked {
+    background-color: #2a2d5e;
+  }
+  .bg-available {
+    background-color: #3d4178;
+  }
+  .bg-in-progress {
+    background-color: #4a6fa5;
+  }
+  .bg-completed {
+    background-color: #2ecc71;
+  }
+
+  /* Glass morphism */
+  .glass {
+    background-color: rgba(26, 31, 77, 0.6);
+    backdrop-filter: blur(10px);
+  }
+  .glass-border {
+    border-color: rgba(240, 244, 255, 0.1);
+  }
+  .glass-glow {
+    border-color: rgba(107, 63, 160, 0.3);
+  }
+
+  /* Glow effects */
+  .glow-solar {
+    shadow-color: rgba(255, 215, 0, 0.3);
+    shadow-opacity: 1;
+    shadow-radius: 10;
+    shadow-offset: 0px 0px;
+  }
+  .glow-cosmic {
+    shadow-color: rgba(107, 63, 160, 0.3);
+    shadow-opacity: 1;
+    shadow-radius: 10;
+    shadow-offset: 0px 0px;
+  }
+  .glow-aurora {
+    shadow-color: rgba(0, 255, 136, 0.3);
+    shadow-opacity: 1;
+    shadow-radius: 10;
+    shadow-offset: 0px 0px;
+  }
+
+  /* Border utilities */
+  .border-space {
+    border-color: rgba(240, 244, 255, 0.1);
+  }
+  .border-glow {
+    border-color: rgba(107, 63, 160, 0.3);
+  }
+
+  /* Overlay */
+  .overlay-space {
+    background-color: rgba(5, 8, 20, 0.8);
+  }
+}
+
+@layer utilities {
+  /* Subtle animation utilities */
+  .animate-twinkle {
+    animation: twinkle 3s ease-in-out infinite;
+  }
+  .animate-float {
+    animation: float 4s ease-in-out infinite;
+  }
+  .animate-pulse-subtle {
+    animation: pulse-subtle 2s ease-in-out infinite;
+  }
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(-4px); }
+  50% { transform: translateY(4px); }
+}
+
+@keyframes pulse-subtle {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+}

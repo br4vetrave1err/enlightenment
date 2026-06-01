@@ -1,0 +1,78 @@
+{
+  "name": "brownfield",
+  "description": "Brownfield project configuration for existing codebase with FastAPI backend, React Native mobile app (Obytes template), space exploration design system, and shared TypeScript contracts",
+  "extensions": ["brownfield", "bugfix", "git"],
+  "profile": ".specify/brownfield-profile.md",
+  "conventions": {
+    "backend": {
+      "language": "python",
+      "naming": "snake_case",
+      "framework": "fastapi",
+      "test_framework": "pytest",
+      "test_dir": "backend/tests"
+    },
+    "mobile": {
+      "language": "typescript",
+      "naming": "PascalCase (components), camelCase (utilities), kebab-case (files)",
+      "framework": "expo",
+      "router": "expo-router",
+      "styling": "nativewind-tailwindcss",
+      "state_management": "zustand",
+      "data_fetching": "react-query",
+      "forms": "tanstack-form + zod",
+      "storage": "react-native-mmkv",
+      "animations": "react-native-reanimated + moti",
+      "testing": {
+        "unit": "jest + react-testing-library",
+        "e2e": "maestro"
+      },
+      "ci_cd": "github-actions + eas-build",
+      "git_hooks": "husky + lint-staged + commitlint",
+      "i18n": "i18next",
+      "theme": {
+        "name": "space-exploration",
+        "mode": "dark-only",
+        "guide": "mobile/DESIGN_GUIDE.md",
+        "colors": "mobile/src/theme/colors.ts",
+        "components": "mobile/src/components/ui/"
+      },
+      "structure": {
+        "app": "mobile/src/app/",
+        "features": "mobile/src/features/",
+        "components": "mobile/src/components/ui/",
+        "space_components": "mobile/src/components/space/",
+        "lib": "mobile/src/lib/",
+        "translations": "mobile/src/translations/",
+        "theme": "mobile/src/theme/",
+        "styles": "mobile/src/global.css"
+      }
+    },
+    "shared": {
+      "language": "typescript",
+      "naming": "camelCase",
+      "purpose": "api-contracts"
+    }
+  },
+  "spec_mapping": {
+    "api_features": "backend/app/api/",
+    "mobile_features": "mobile/src/features/",
+    "mobile_routes": "mobile/src/app/",
+    "mobile_ui_components": "mobile/src/components/ui/",
+    "mobile_space_components": "mobile/src/components/space/",
+    "mobile_theme": "mobile/src/theme/",
+    "ai_agent_features": "backend/app/agent/",
+    "shared_contracts": "shared/"
+  },
+  "hooks": {
+    "after_init": {
+      "command": "speckit.brownfield.scan",
+      "enabled": true,
+      "optional": true
+    },
+    "after_implement": {
+      "command": "speckit.bugfix.verify",
+      "enabled": true,
+      "optional": true
+    }
+  }
+}
