@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import type { RoadmapData, UserProgressData, TopicStatus } from '../types';
 
 export function useRoadmapProgress(
@@ -20,19 +20,19 @@ export function useRoadmapProgress(
     return roadmapData.roadmap.variants.find(v => v.id === selectedVariantId) || null;
   }, [selectedVariantId, roadmapData]);
 
-  const getTopicStatus = (topicId: string): TopicStatus => {
+  const getTopicStatus = useCallback((topicId: string): TopicStatus => {
     return statusMap.get(topicId) || 'not_started';
-  };
+  }, [statusMap]);
 
-  const isPhaseSkipped = (phaseId: string) => {
+  const isPhaseSkipped = useCallback((phaseId: string) => {
     if (!activeVariant) return false;
     return activeVariant.skip_phases.includes(phaseId);
-  };
+  }, [activeVariant]);
 
-  const isTopicSkipped = (topicId: string) => {
+  const isTopicSkipped = useCallback((topicId: string) => {
     if (!activeVariant) return false;
     return activeVariant.skip_topics.includes(topicId);
-  };
+  }, [activeVariant]);
 
   return {
     getTopicStatus,

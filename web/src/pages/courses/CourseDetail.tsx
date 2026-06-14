@@ -1,12 +1,9 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { authFetch } from '../../lib/api';
 import { 
-  Check, 
-  Lock, 
   ArrowLeft, 
-  Compass, 
-  Gift 
+  Search
 } from 'lucide-react';
 import './RoadmapPath.css';
 import { useRoadmapProgress } from '../../hooks/useRoadmapProgress';
@@ -14,125 +11,29 @@ import { TopicDetailsPanel } from '../../components/TopicDetailsPanel';
 import { VariantSelector } from '../../components/VariantSelector';
 import type { RoadmapData, UserProgressData } from '../../types';
 
-const isStructuralNode = (nodeId: string, title: string, courseTitle?: string): boolean => {
-  if (!title) return true;
-  if (title === nodeId) return true;
-  const t = title.toLowerCase();
-  if (courseTitle && t === courseTitle.toLowerCase()) return true;
-  return (
-    t === 'horizontal node' ||
-    t === 'vertical node' ||
-    t === 'roadmap.sh' ||
-    t.includes('interactive version') ||
-    t.includes('has lots of services') ||
-    t.includes('best way to learn') ||
-    t.includes('continue learning') ||
-    t.includes('relevant tracks') ||
-    t.includes('detailed version')
-  );
+import {
+  ReactFlow,
+  Background,
+  Controls,
+  useNodesState,
+  useEdgesState,
+} from '@xyflow/react';
+import type { Node, Edge } from '@xyflow/react';
+import '@xyflow/react/dist/style.css';
+
+import { getLayoutedElements } from '../../features/courses/utils/layout';
+import RoadmapNode from './RoadmapNode';
+import GroupNode from './GroupNode';
+import RoadmapEdge from './RoadmapEdge';
+
+const nodeTypes = {
+  roadmapNode: RoadmapNode,
+  groupNode: GroupNode,
 };
 
-// Compute visible nodes using BFS traversal starting from in-degree 0 nodes.
-// If a node is disabled (e.g. skipped or structural), we still traverse through it to reach its children
-// (Edge Bridging), but the disabled node itself will not be added to the visible set.
-function getVisibleNodes(nodes: any[], edges: any[], disabledNodeIds: Set<string>): Set<string> {
-  const visible = new Set<string>();
-  const traversed = new Set<string>();
-  const adjList = new Map<string, string[]>();
-  const inDegree = new Map<string, number>();
-
-  nodes.forEach(n => {
-    adjList.set(n.node_id, []);
-    inDegree.set(n.node_id, 0);
-  });
-
-  edges.forEach(e => {
-    const source = e.from_node || e.from || e.source;
-    const target = e.to_node || e.to || e.target;
-    if (source && target && adjList.has(source) && adjList.has(target)) {
-      adjList.get(source)!.push(target);
-      inDegree.set(target, (inDegree.get(target) || 0) + 1);
-    }
-  });
-
-  const queue: string[] = [];
-  nodes.forEach(n => {
-    if ((inDegree.get(n.node_id) || 0) === 0) {
-      queue.push(n.node_id);
-      traversed.add(n.node_id);
-      if (!disabledNodeIds.has(n.node_id)) {
-        visible.add(n.node_id);
-      }
-    }
-  });
-
-  while (queue.length > 0) {
-    const curr = queue.shift()!;
-    const neighbors = adjList.get(curr) || [];
-    neighbors.forEach(neighbor => {
-      if (!traversed.has(neighbor)) {
-        traversed.add(neighbor);
-        queue.push(neighbor);
-        if (!disabledNodeIds.has(neighbor)) {
-          visible.add(neighbor);
-        }
-      }
-    });
-  }
-
-  return visible;
-}
-
-// Topological sort algorithm to linearize the course DAG
-function sortNodesTopologically(nodes: any[], edges: any[]): any[] {
-  const nodeMap = new Map(nodes.map(n => [n.node_id, n]));
-  const adjList = new Map<string, string[]>();
-  const inDegree = new Map<string, number>();
-
-  nodes.forEach(n => {
-    adjList.set(n.node_id, []);
-    inDegree.set(n.node_id, 0);
-  });
-
-  edges.forEach(e => {
-    const source = e.from_node || e.from || e.source;
-    const target = e.to_node || e.to || e.target;
-    if (source && target && adjList.has(source) && adjList.has(target)) {
-      adjList.get(source)!.push(target);
-      inDegree.set(target, (inDegree.get(target) || 0) + 1);
-    }
-  });
-
-  const queue: string[] = [];
-  nodes.forEach(n => {
-    if ((inDegree.get(n.node_id) || 0) === 0) {
-      queue.push(n.node_id);
-    }
-  });
-
-  const sortedIds: string[] = [];
-  while (queue.length > 0) {
-    const curr = queue.shift()!;
-    sortedIds.push(curr);
-    const neighbors = adjList.get(curr) || [];
-    neighbors.forEach(neighbor => {
-      inDegree.set(neighbor, (inDegree.get(neighbor) || 1) - 1);
-      if (inDegree.get(neighbor) === 0) {
-        queue.push(neighbor);
-      }
-    });
-  }
-
-  const sortedNodes = sortedIds.map(id => nodeMap.get(id)!).filter(Boolean);
-  const sortedSet = new Set(sortedIds);
-  nodes.forEach(n => {
-    if (!sortedSet.has(n.node_id)) {
-      sortedNodes.push(n);
-    }
-  });
-
-  return sortedNodes;
-}
+const edgeTypes = {
+  roadmapEdge: RoadmapEdge,
+};
 
 function mapBackendToRoadmap(data: any): RoadmapData {
   if (!data) return { roadmap: {} as any };
@@ -219,6 +120,11 @@ export default function CourseDetail() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const [nodes, setNodes, onNodesChange] = useNodesState<Node>([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
+
   // Persistence of skipped branch node IDs
   const [disabledNodeIds, setDisabledNodeIds] = useState<Set<string>>(() => {
     try {
@@ -230,7 +136,6 @@ export default function CourseDetail() {
   });
 
   // Interactive elements states
-  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selectedTopic, setSelectedTopic] = useState<any>(null);
   const [nodeDetails, setNodeDetails] = useState<any>(null);
@@ -254,91 +159,65 @@ export default function CourseDetail() {
     fetchCourseData();
   }, [fetchCourseData]);
 
-  const courseNodes = course?.phases 
-    ? course.phases.flatMap((p: any) => p.topics.map((t: any) => ({ node_id: t.id, title: t.name, ...t })))
-    : [];
-    
-  const courseEdges = course?.topic_graph 
-    ? course.topic_graph.map((edge: any) => ({ from_node: edge.from, to_node: edge.to, type: edge.type }))
-    : [];
-
-  // Identify structural/layout nodes to filter them out of the visible roadmap
-  const structuralNodeIds = new Set<string>(
-    courseNodes
-      .filter((n: any) => isStructuralNode(n.node_id, n.title, course?.title))
-      .map((n: any) => n.node_id as string)
-  );
-
-  // Combine user-skipped nodes and structural layout nodes for edge bridging
-  const skippedAndStructuralNodeIds = new Set<string>([
-    ...Array.from(disabledNodeIds),
-    ...Array.from(structuralNodeIds)
-  ]);
-
-  // Compute visible node IDs using BFS visibility solver with edge bridging
-  const visibleNodeIds = course 
-    ? getVisibleNodes(courseNodes, courseEdges, skippedAndStructuralNodeIds) 
-    : new Set<string>();
-  
-  // Filter course nodes to keep only visible ones
-  const visibleNodes = course ? courseNodes.filter((n: any) => visibleNodeIds.has(n.node_id)) : [];
-  
-  // Sort visible nodes topologically
-  const sortedVisibleNodes = course ? sortNodesTopologically(visibleNodes, courseEdges) : [];
-  
-  // Map back to phases structure for useRoadmapProgress
-  const visibleNodeIdSet = new Set(sortedVisibleNodes.map(n => n.node_id));
-  const nodeIndexMap = new Map(sortedVisibleNodes.map((n, idx) => [n.node_id, idx]));
-  
-  const mappedCourseData = course ? { 
-    ...course, 
-    phases: course.phases.map((p: any) => {
-      const filteredTopics = p.topics.filter((t: any) => visibleNodeIdSet.has(t.id));
-      filteredTopics.sort((a: any, b: any) => {
-        const idxA = nodeIndexMap.get(a.id) ?? 0;
-        const idxB = nodeIndexMap.get(b.id) ?? 0;
-        return idxA - idxB;
-      });
-      return {
-        ...p,
-        topics: filteredTopics
-      };
-    })
-  } : null;
-  const roadmapData = mapBackendToRoadmap(mappedCourseData);
-  const progressData = mapBackendToProgress(mappedCourseData);
+  const roadmapData = useMemo(() => mapBackendToRoadmap(course), [course]);
+  const progressData = useMemo(() => mapBackendToProgress(course), [course]);
 
   const { 
     getTopicStatus, 
     selectedVariantId, 
-    setSelectedVariantId,
-    isPhaseSkipped,
-    isTopicSkipped
+    setSelectedVariantId
   } = useRoadmapProgress(
     roadmapData, 
     progressData
   );
 
-  const handleNodeClick = (item: any) => {
-    if (item.status === 'locked') return;
+  const handleStatusToggle = useCallback(async (nodeId: string, currentStatus: string) => {
+    const isCompleted = currentStatus === 'completed' || currentStatus === 'done';
+    const nextAction = isCompleted ? 'not_started' : 'complete';
     
-    if (selectedNodeId === item.id) {
-      setSelectedNodeId(null);
-    } else {
-      setSelectedNodeId(item.id);
+    setMarkingComplete(true);
+    try {
+      await authFetch(`/api/user/progress/${courseId}/node`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          node_id: nodeId,
+          action: nextAction,
+          time_spent_seconds: 120
+        })
+      });
+      
+      await fetchCourseData();
+    } catch (err: any) {
+      alert(`Progress transmission failed: ${err.message}`);
+    } finally {
+      setMarkingComplete(false);
     }
-  };
+  }, [courseId, fetchCourseData]);
 
-  const openDrawer = async (item: any) => {
-    setSelectedNodeId(null);
-    setSelectedTopic(item.topicObj);
+  const handleNodeDetailsClick = useCallback(async (nodeId: string) => {
+    // Locate the topic object
+    let foundTopic: any = null;
+    if (course?.phases) {
+      for (const phase of course.phases) {
+        const t = phase.topics?.find((topic: any) => topic.id === nodeId);
+        if (t) {
+          foundTopic = t;
+          break;
+        }
+      }
+    }
+
+    if (!foundTopic) return;
+
+    setSelectedTopic(foundTopic);
     setDrawerOpen(true);
     setDrawerLoading(true);
     setDrawerError('');
     setNodeDetails(null);
     
     try {
-      const res = await authFetch(`/api/courses/${courseId}/nodes/${item.id}`);
+      const res = await authFetch(`/api/courses/${courseId}/nodes/${nodeId}`);
       const data = await res.json();
       setNodeDetails(data);
     } catch (err: any) {
@@ -346,7 +225,7 @@ export default function CourseDetail() {
     } finally {
       setDrawerLoading(false);
     }
-  };
+  }, [course, courseId]);
 
   const closeDrawer = () => {
     setDrawerOpen(false);
@@ -392,6 +271,56 @@ export default function CourseDetail() {
     });
   }, [courseId]);
 
+  // Layout and filter nodes dynamically when course, search, variant, or disabled nodes change
+  useEffect(() => {
+    if (course?.phases) {
+      // 1. Gather skip list from active variant
+      const skipTopicsSet = new Set<string>();
+      if (course.variants && selectedVariantId) {
+        const variantObj = course.variants.find((v: any) => v.id === selectedVariantId);
+        if (variantObj) {
+          variantObj.skip_topics.forEach((tId: string) => skipTopicsSet.add(tId));
+        }
+      }
+      // Add manual user disabled branch node IDs to skip set
+      disabledNodeIds.forEach(id => skipTopicsSet.add(id));
+
+      // 2. Map backend topics to updated statuses for layout
+      const updatedPhases = course.phases.map((p: any) => ({
+        ...p,
+        topics: (p.topics || []).map((t: any) => ({
+          ...t,
+          status: getTopicStatus(t.id)
+        }))
+      }));
+
+      const { nodes: layoutedNodes, edges: layoutedEdges } = getLayoutedElements(
+        updatedPhases,
+        course.topic_graph || [],
+        searchTerm,
+        skipTopicsSet
+      );
+
+      // Add callbacks into node data
+      const finalNodes = layoutedNodes.map(node => {
+        if (node.type === 'roadmapNode') {
+          return {
+            ...node,
+            data: {
+              ...node.data,
+              onStatusToggle: handleStatusToggle,
+              onNodeDetailsClick: handleNodeDetailsClick,
+            }
+          };
+        }
+        return node;
+      });
+
+      setNodes(finalNodes);
+      setEdges(layoutedEdges);
+    }
+  }, [course, selectedVariantId, disabledNodeIds, searchTerm, getTopicStatus, handleStatusToggle, handleNodeDetailsClick, setNodes, setEdges]);
+
   if (loading && !course) {
     return <div className="p-8 text-center text-slate-400 italic">Scanning the constellation map...</div>;
   }
@@ -400,104 +329,16 @@ export default function CourseDetail() {
     return <div className="p-8 text-center text-red-500">Error: {error}</div>;
   }
 
-  // 1. Get filtered list of phases and topics based on active variant
-  const visiblePhases = roadmapData.roadmap.phases.filter(p => !isPhaseSkipped(p.id));
-  
-  // 2. Generate flat positioned items list
-  let currentY = 40;
-  let circleIndex = 0;
-  const positionedItems: any[] = [];
-
-  visiblePhases.forEach((phase) => {
-    // Add phase header node
-    positionedItems.push({
-      id: phase.id,
-      title: phase.name,
-      status: 'available',
-      type: 'header',
-      x: 250,
-      y: currentY + 40
-    });
-    currentY += 120;
-
-    // Add topic nodes
-    phase.topics.forEach((topic) => {
-      if (isTopicSkipped(topic.id)) return;
-
-      const isChest = topic.type === 'optional' || topic.name.toLowerCase().includes('chest') || (circleIndex > 0 && circleIndex % 5 === 0);
-      const xOffset = Math.sin(circleIndex * 0.9) * 80;
-      const x = 250 + xOffset;
-
-      positionedItems.push({
-        id: topic.id,
-        title: topic.name,
-        status: getTopicStatus(topic.id),
-        type: isChest ? 'chest' : 'lesson',
-        topicObj: topic,
-        x,
-        y: currentY + 38
-      });
-
-      currentY += 145;
-      circleIndex++;
-    });
-  });
-
-  const circularItems = positionedItems.filter(item => item.type !== 'header');
-  const activeItem = 
-    circularItems.find(item => item.status === 'in_progress') || 
-    circularItems.find(item => item.status === 'available') ||
-    circularItems.find(item => item.status !== 'completed' && item.status !== 'done' && item.status !== 'locked');
-
-  // Generate SVG Bezier Path connectors
-  const renderPaths = () => {
-    const paths: React.ReactNode[] = [];
-    for (let i = 0; i < circularItems.length - 1; i++) {
-      const pStart = circularItems[i];
-      const pEnd = circularItems[i + 1];
-      
-      const isTargetUnlocked = 
-        pEnd.status === 'completed' || 
-        pEnd.status === 'done' ||
-        pEnd.status === 'in_progress' || 
-        pEnd.status === 'available';
-        
-      const d = `M ${pStart.x} ${pStart.y} C ${pStart.x} ${pStart.y + 65}, ${pEnd.x} ${pEnd.y - 65}, ${pEnd.x} ${pEnd.y}`;
-      
-      paths.push(
-        <g key={`seg-${i}`}>
-          <path
-            d={d}
-            fill="none"
-            stroke={isTargetUnlocked ? 'rgba(0, 212, 255, 0.15)' : 'rgba(42, 42, 63, 0.2)'}
-            strokeWidth={14}
-            strokeLinecap="round"
-            style={{ filter: isTargetUnlocked ? 'drop-shadow(0 0 6px rgba(0, 212, 255, 0.5))' : 'none' }}
-          />
-          <path
-            d={d}
-            fill="none"
-            stroke={isTargetUnlocked ? 'var(--starlight)' : '#232338'}
-            strokeWidth={5}
-            strokeLinecap="round"
-            strokeDasharray={!isTargetUnlocked ? '6,6' : 'none'}
-          />
-        </g>
-      );
-    }
-    return paths;
-  };
-
-  const svgHeight = positionedItems.length > 0 ? positionedItems[positionedItems.length - 1].y + 120 : 800;
-
   // Retrieve option nodes for the branch selector widget in the drawer
   const getBranchChildNodes = () => {
-    if (!courseEdges || !courseNodes || !selectedTopic) return [];
+    if (!course?.topic_graph || !course?.phases || !selectedTopic) return [];
     
-    const childEdges = courseEdges.filter((e: any) => e.from_node === selectedTopic.id);
+    const childEdges = course.topic_graph.filter((e: any) => e.from === selectedTopic.id);
+    const flatNodes = course.phases.flatMap((p: any) => p.topics);
     
     return childEdges.map((e: any) => {
-      return courseNodes.find((n: any) => n.node_id === e.to_node);
+      const matched = flatNodes.find((n: any) => n.id === e.to);
+      return matched ? { node_id: matched.id, title: matched.name, ...matched } : null;
     }).filter(Boolean);
   };
 
@@ -511,140 +352,114 @@ export default function CourseDetail() {
   } : null;
 
   return (
-    <div className="roadmap-page-container">
-      <div className="roadmap-scroll-area">
-        
-        {/* Header Block */}
-        <div className="roadmap-header-banner">
-          <div className="roadmap-header-card">
-            <div>
-              <h2>{course?.title}</h2>
-              <p>Follow the planetary serpentine checkposts.</p>
-            </div>
-            <button className="roadmap-back-btn" onClick={() => navigate('/courses')}>
-              <ArrowLeft size={16} /> Map Room
-            </button>
+    <div className="roadmap-page-container" style={{ background: '#09090b', height: 'calc(100vh - 64px)', position: 'relative' }}>
+      
+      {/* Floating Header Card - Aligned with roadmap.sh UI */}
+      <div 
+        style={{ 
+          position: 'absolute', 
+          top: '20px', 
+          left: '20px', 
+          right: '20px',
+          zIndex: 10, 
+          display: 'flex', 
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          pointerEvents: 'none' // Allow canvas clicks behind spacing
+        }}
+      >
+        <div style={{ display: 'flex', gap: '16px', alignItems: 'center', pointerEvents: 'auto' }}>
+          <button 
+            className="roadmap-back-btn" 
+            onClick={() => navigate('/courses')}
+            style={{
+              background: '#18181b',
+              border: '1px solid #27272a',
+              color: '#f4f4f5',
+              padding: '10px 14px',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              fontSize: '13px',
+              fontWeight: 500
+            }}
+          >
+            <ArrowLeft size={16} /> Dashboard
+          </button>
+          
+          <div style={{ background: '#18181b', border: '1px solid #27272a', borderRadius: '8px', padding: '8px 16px', display: 'flex', flexDirection: 'column' }}>
+            <h2 style={{ margin: 0, fontSize: '15px', color: '#f4f4f5', fontWeight: 600 }}>{course?.title}</h2>
           </div>
         </div>
 
-        {/* Variant Selector */}
-        {roadmapData.roadmap.variants && roadmapData.roadmap.variants.length > 0 && (
-          <VariantSelector 
-            variants={roadmapData.roadmap.variants} 
-            selectedVariantId={selectedVariantId}
-            onSelect={setSelectedVariantId}
-          />
-        )}
-
-        {/* Serpentine Graph Path Canvas */}
-        <div className="roadmap-path-wrapper" style={{ height: `${svgHeight}px` }}>
+        {/* Search Input and Variant Selector container */}
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center', pointerEvents: 'auto' }}>
           
-          {/* SVG Backing Connector lines */}
-          <svg className="roadmap-svg-canvas" viewBox={`0 0 500 ${svgHeight}`}>
-            {renderPaths()}
-          </svg>
-
-          {/* Astronaut Mascot overlay */}
-          {activeItem && (
-            <div 
-              className="roadmap-mascot"
+          {/* Search bar */}
+          <div style={{ position: 'relative' }}>
+            <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#71717a' }} />
+            <input
+              type="text"
+              placeholder="Search topics..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
               style={{
-                left: `${activeItem.x}px`,
-                top: `${activeItem.y - 70}px`,
-                transform: 'translateX(-50%)',
+                padding: '8px 12px 8px 36px',
+                borderRadius: '8px',
+                border: '1px solid #27272a',
+                background: '#18181b',
+                color: '#f4f4f5',
+                width: '200px',
+                fontSize: '13px',
+                outline: 'none',
               }}
-            >
-              <svg viewBox="0 0 64 64" width="54" height="54">
-                <circle cx="32" cy="24" r="14" fill="#e0e0ff" />
-                <rect x="22" y="16" width="20" height="12" rx="6" fill="#0a0a1a" stroke="#00D4FF" strokeWidth="2" />
-                <circle cx="38" cy="20" r="2" fill="#ffffff" />
-                <rect x="20" y="38" width="24" height="18" rx="8" fill="#e0e0ff" />
-                <rect x="16" y="35" width="32" height="16" rx="4" fill="#8a8aab" />
-                <rect x="14" y="38" width="6" height="10" rx="3" fill="#8a8aab" />
-                <rect x="44" y="38" width="6" height="10" rx="3" fill="#8a8aab" />
-                <polygon points="32,43 33.5,46 36.5,46 34.2,47.5 35,50.5 32,49 29,50.5 29.8,47.5 27.5,46 30.5,46" fill="#FF00FF" />
-              </svg>
-            </div>
+            />
+          </div>
+
+          {/* Variant Selector */}
+          {roadmapData.roadmap.variants && roadmapData.roadmap.variants.length > 0 && (
+            <VariantSelector 
+              variants={roadmapData.roadmap.variants} 
+              selectedVariantId={selectedVariantId}
+              onSelect={setSelectedVariantId}
+            />
           )}
-
-          {/* Render individual items (nodes and step banners) */}
-          {positionedItems.map((item) => {
-            const isHeader = item.type === 'header';
-            
-            if (isHeader) {
-              return (
-                <div 
-                  key={item.id}
-                  className="roadmap-unit-banner-wrapper"
-                  style={{ left: `${item.x}px`, top: `${item.y}px` }}
-                >
-                  <div className="roadmap-unit-banner">
-                    <h3 className="roadmap-unit-title">{item.title}</h3>
-                    <p className="roadmap-unit-desc">Launch Checkpoint Sequence</p>
-                  </div>
-                </div>
-              );
-            }
-            
-            const isCompleted = item.status === 'completed' || item.status === 'done';
-            const isActive = activeItem?.id === item.id;
-            const isLocked = item.status === 'locked';
-            const isAvailable = item.status === 'available' || item.status === 'in_progress';
-
-            let circleClass = 'locked';
-            if (isCompleted) circleClass = 'completed';
-            else if (isActive) circleClass = 'active';
-            else if (isAvailable) circleClass = 'available';
-
-            return (
-              <div 
-                key={item.id}
-                className="roadmap-node-wrapper"
-                style={{ left: `${item.x}px`, top: `${item.y}px` }}
-              >
-                {isActive && <div className="active-pulse-ring" />}
-
-                <div 
-                  className={`roadmap-node-circle ${circleClass}`}
-                  onClick={() => handleNodeClick(item)}
-                >
-                  {isCompleted ? (
-                    <Check size={30} strokeWidth={3.5} color="#fff" />
-                  ) : isLocked ? (
-                    <Lock size={26} strokeWidth={2.5} />
-                  ) : item.type === 'chest' ? (
-                    <Gift size={28} strokeWidth={2.5} />
-                  ) : (
-                    <Compass size={28} strokeWidth={2.5} />
-                  )}
-                </div>
-
-                <span className="roadmap-node-label">{item.title}</span>
-
-                {selectedNodeId === item.id && (
-                  <div className="roadmap-tooltip">
-                    <h4 className="roadmap-tooltip-title">{item.title}</h4>
-                    <p className="roadmap-tooltip-meta">
-                      {item.type === 'chest' ? '💎 Reward Station' : `⏱️ 30 mins lesson`}
-                    </p>
-                    <button 
-                      className="roadmap-tooltip-btn"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        openDrawer(item);
-                      }}
-                    >
-                      {isCompleted ? 'Review Logs' : 'Begin Mission'}
-                    </button>
-                  </div>
-                )}
-              </div>
-            );
-          })}
-
         </div>
       </div>
 
+      {/* React Flow Canvas */}
+      <div style={{ width: '100%', height: '100%' }}>
+        <ReactFlow
+          nodes={nodes}
+          edges={edges}
+          nodeTypes={nodeTypes}
+          edgeTypes={edgeTypes}
+          onNodesChange={onNodesChange}
+          onEdgesChange={onEdgesChange}
+          fitView
+          fitViewOptions={{ padding: 0.2 }}
+          minZoom={0.2}
+          maxZoom={1.5}
+        >
+          <Background color="#27272a" gap={16} size={1} />
+          <Controls 
+            showInteractive={false}
+            style={{
+              background: '#18181b',
+              border: '1px solid #27272a',
+              borderRadius: '8px',
+              padding: '4px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '4px'
+            }}
+          />
+        </ReactFlow>
+      </div>
+
+      {/* Details Side Drawer */}
       {drawerOpen && (
         <>
           <div className="roadmap-drawer-backdrop" onClick={closeDrawer} />
