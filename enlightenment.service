@@ -1,0 +1,16 @@
+[Unit]
+Description=Enlightenment App and Ngrok Tunnel
+After=docker.service network-online.target
+Wants=docker.service network-online.target
+
+[Service]
+Type=simple
+User=br4vetrave1er
+WorkingDirectory=/home/br4vetrave1er/Desktop/projects/enlightenment
+ExecStart=/home/br4vetrave1er/Desktop/projects/enlightenment/start.sh
+Restart=always
+RestartSec=10
+Environment="PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/home/br4vetrave1er/.local/bin"
+
+[Install]
+WantedBy=multi-user.target

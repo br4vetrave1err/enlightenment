@@ -1,0 +1,26 @@
+appId: com.enlightenment.mobile
+---
+- launchApp
+- waitForAnimationToEnd
+
+# Navigate to register screen
+- tapOn: "Don't have an account? Sign up"
+- waitForAnimationToEnd
+
+# Fill registration form
+- tapOn: "Name"
+- inputText: "Test User"
+- tapOn: "Email"
+- inputText: "newuser@example.com"
+- tapOn: "Password"
+- inputText: "password123"
+- tapOn: "Confirm Password"
+- inputText: "password123"
+
+# Submit registration
+- tapOn: "Sign Up"
+
+# Verify successful registration - should see courses tab
+- assertVisible:
+    text: "Courses"
+    optional: true

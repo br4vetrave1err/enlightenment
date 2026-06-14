@@ -1,0 +1,60 @@
+.markdown-content h1, 
+.markdown-content h2, 
+.markdown-content h3 {
+  color: var(--starlight);
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+.markdown-content p {
+  margin-bottom: 1.2em;
+  line-height: 1.7;
+}
+
+.markdown-content a {
+  color: var(--nebula);
+  text-decoration: none;
+}
+
+.markdown-content a:hover {
+  text-decoration: underline;
+}
+
+.markdown-content pre {
+  background: rgba(0, 0, 0, 0.4);
+  padding: 16px;
+  border-radius: 8px;
+  overflow-x: auto;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  margin-bottom: 1.2em;
+}
+
+.markdown-content code {
+  font-family: 'Courier New', Courier, monospace;
+  background: rgba(0, 0, 0, 0.3);
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+.markdown-content pre code {
+  background: transparent;
+  padding: 0;
+}
+
+.markdown-content ul, 
+.markdown-content ol {
+  margin-bottom: 1.2em;
+  padding-left: 24px;
+}
+
+.markdown-content li {
+  margin-bottom: 0.5em;
+}
+
+.markdown-content blockquote {
+  border-left: 4px solid var(--starlight);
+  margin: 0;
+  padding-left: 16px;
+  color: var(--text-muted);
+  font-style: italic;
+}

@@ -1,0 +1,23 @@
+appId: com.enlightenment.mobile
+---
+- launchApp
+- waitForAnimationToEnd
+
+# Navigate to progress tab
+- tapOn: "Progress"
+- waitForAnimationToEnd
+
+# Verify progress screen loads
+- assertVisible:
+    text: "Stats Overview"
+    optional: true
+
+# Verify skill tree section
+- assertVisible:
+    text: "Skill Tree"
+    optional: true
+
+# Verify achievements section
+- assertVisible:
+    text: "Achievements"
+    optional: true

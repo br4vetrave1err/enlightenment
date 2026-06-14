@@ -91,9 +91,13 @@
 
 | Test ID | Flow | Steps | Status | Notes |
 |---------|------|-------|--------|-------|
-| T-124 | auth-flow | Open app → see login → enter credentials → see courses | ⬜ | `mobile/.maestro/auth-flow.yaml` |
-| T-125 | course-navigation | Tap course → see constellation → tap node → see content → mark complete | ⬜ | `mobile/.maestro/course-navigation.yaml` |
-| T-126 | chat-flow | Open chat → type message → send → see streaming → see sources | ⬜ | `mobile/.maestro/chat-flow.yaml` |
+| T-124 | login | Open app → tap login → enter credentials → submit | ✅ | `mobile/.maestro/login.yaml` |
+| T-125 | register | Open app → tap register → fill form → submit | ✅ | `mobile/.maestro/register.yaml` |
+| T-126 | courses | Open app → browse courses → tap course → view detail | ✅ | `mobile/.maestro/courses.yaml` |
+| T-127 | chat | Open app → navigate to chat → type message → send | ✅ | `mobile/.maestro/chat.yaml` |
+| T-128 | progress | Open app → navigate to progress → view stats/skills/achievements | ✅ | `mobile/.maestro/progress.yaml` |
+| T-129 | map | Open app → navigate to map → view roadmap graph | ✅ | `mobile/.maestro/map.yaml` |
+| T-130 | user-journey | Complete user journey: login → browse → progress → map → chat | ✅ | `mobile/.maestro/user-journey.yaml` |
 
 ---
 
@@ -120,4 +124,4 @@
 
 | Date | Phase | Change | Author |
 |------|-------|--------|--------|
-| — | 7 | Initial creation | — |
+| 2026-06-01 | 7 | Added Maestro E2E test flows (login, register, courses, chat, progress, map, user-journey) | opencode |

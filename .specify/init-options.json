@@ -1,15 +1,16 @@
 {
-  "ai": "opencode",
+  "ai": "agy",
+  "ai_skills": true,
   "branch_numbering": "sequential",
-  "context_file": "AGENTS.md",
-  "here": false,
-  "integration": "opencode",
-  "script": "sh",
-  "speckit_version": "0.8.12",
-  "default_preset": "brownfield",
   "brownfield": {
+    "auto_scan_on_init": true,
     "enabled": true,
-    "profile": ".specify/brownfield-profile.md",
-    "auto_scan_on_init": true
-  }
+    "profile": ".specify/brownfield-profile.md"
+  },
+  "context_file": "AGENTS.md",
+  "default_preset": "brownfield",
+  "here": false,
+  "integration": "agy",
+  "script": "sh",
+  "speckit_version": "0.8.12"
 }

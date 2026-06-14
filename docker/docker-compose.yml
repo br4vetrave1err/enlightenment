@@ -4,7 +4,9 @@ services:
       context: ../backend
       dockerfile: Dockerfile
     ports:
-      - "8000:8000"
+      - "8080:8080"
+    env_file:
+      - ../.env
     environment:
       - MONGODB_URL=mongodb://mongodb:27017/roadmap_learning
       - ZEN_API_KEY=${ZEN_API_KEY}

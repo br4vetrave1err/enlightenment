@@ -34,9 +34,9 @@
 
 | Test ID | Type | Test Case | File Path | Status | Notes |
 |---------|------|-----------|-----------|--------|-------|
-| T-001 | Contract | Health endpoint returns 200 | `backend/tests/contract/test_health.py` | ⬜ | — |
-| T-002 | Unit | Password hash + verify | `backend/tests/unit/test_password.py` | ⬜ | — |
-| T-003 | Unit | JWT create + decode + expiry | `backend/tests/unit/test_jwt.py` | ⬜ | — |
+| T-001 | Contract | Health endpoint returns 200 | `backend/tests/contract/test_health.py` | ✅ Passed | — |
+| T-002 | Unit | Password hash + verify | `backend/tests/unit/test_password.py` | ✅ Passed | 5 tests |
+| T-003 | Unit | JWT create + decode + expiry | `backend/tests/unit/test_jwt.py` | ✅ Passed | 4 tests |
 
 ---
 
@@ -74,4 +74,12 @@
 
 | Date | Phase | Change | Author |
 |------|-------|--------|--------|
-| — | 1 | Initial creation | — |
+| 2026-01-XX | 1 | Initial creation | — |
+| 2026-01-XX | 1 | Test framework, password hashing, JWT, DB indexes implemented | — |
+
+## Test Results
+
+- **Total tests**: 9 passed
+- **Contract**: Health endpoint returns 200 ✅
+- **Unit**: Password hashing (5 tests) ✅, JWT (4 tests) ✅
+- **Integration**: DB index creation (2 tests) ✅

@@ -54,22 +54,22 @@
 | T-031 | Contract | Webhook: non-master branch → 200 ignored | `backend/tests/contract/test_webhook.py` | ⬜ | — |
 | T-032 | Contract | Sync status: returns latest sync info | `backend/tests/contract/test_sync_status.py` | ⬜ | — |
 | T-033 | Contract | Sync trigger: returns sync_id | `backend/tests/contract/test_sync_trigger.py` | ⬜ | — |
-| T-034 | Unit | FETCH: SHA comparison detects no changes | `backend/tests/unit/test_pipeline_fetch.py` | ⬜ | — |
-| T-035 | Unit | FETCH: git clone on first run | `backend/tests/unit/test_pipeline_fetch.py` | ⬜ | — |
-| T-036 | Unit | FETCH: git pull on existing repo | `backend/tests/unit/test_pipeline_fetch.py` | ⬜ | — |
-| T-037 | Unit | PARSE: JSON roadmap → nodes + edges | `backend/tests/unit/test_pipeline_parse.py` | ⬜ | — |
-| T-038 | Unit | PARSE: markdown content by node ID | `backend/tests/unit/test_pipeline_parse.py` | ⬜ | — |
-| T-039 | Unit | LLM EXTRACT: prompt formatting | `backend/tests/unit/test_pipeline_llm.py` | ⬜ | — |
-| T-040 | Unit | LLM EXTRACT: JSON parsing + error handling | `backend/tests/unit/test_pipeline_llm.py` | ⬜ | — |
-| T-041 | Unit | LLM EXTRACT: rate limiting (0.1s delay) | `backend/tests/unit/test_pipeline_llm.py` | ⬜ | — |
-| T-042 | Unit | BUILD GRAPH: deduplicate relationships | `backend/tests/unit/test_pipeline_build_graph.py` | ⬜ | — |
-| T-043 | Unit | BUILD GRAPH: cross-course topic aggregation | `backend/tests/unit/test_pipeline_build_graph.py` | ⬜ | — |
-| T-044 | Unit | STORE: upsert courses | `backend/tests/unit/test_pipeline_store.py` | ⬜ | — |
-| T-045 | Unit | STORE: upsert topic_graph | `backend/tests/unit/test_pipeline_store.py` | ⬜ | — |
-| T-046 | Unit | STORE: create sync_log entry | `backend/tests/unit/test_pipeline_store.py` | ⬜ | — |
-| T-047 | Integration | Full pipeline: mock GitHub → parse → mock LLM → store → verify DB | `backend/tests/integration/test_pipeline.py` | ⬜ | — |
-| T-048 | Integration | Idempotent sync: same SHA = no changes | `backend/tests/integration/test_pipeline.py` | ⬜ | — |
-| T-049 | Integration | Pipeline retry: failed step retries 3x | `backend/tests/integration/test_pipeline.py` | ⬜ | — |
+| T-034 | Unit | FETCH: SHA comparison detects no changes | `backend/tests/unit/test_pipeline_fetch.py` | ✅ Passed | — |
+| T-035 | Unit | FETCH: git clone on first run | `backend/tests/unit/test_pipeline_fetch.py` | ✅ Passed | — |
+| T-036 | Unit | FETCH: git pull on existing repo | `backend/tests/unit/test_pipeline_fetch.py` | ✅ Passed | — |
+| T-037 | Unit | PARSE: JSON roadmap → nodes + edges | `backend/tests/unit/test_pipeline_parse.py` | ✅ Passed | — |
+| T-038 | Unit | PARSE: markdown content by node ID | `backend/tests/unit/test_pipeline_parse.py` | ✅ Passed | — |
+| T-039 | Unit | LLM EXTRACT: prompt formatting | `backend/tests/unit/test_pipeline_llm.py` | ✅ Passed | — |
+| T-040 | Unit | LLM EXTRACT: JSON parsing + error handling | `backend/tests/unit/test_pipeline_llm.py` | ✅ Passed | — |
+| T-041 | Unit | LLM EXTRACT: rate limiting (0.1s delay) | `backend/tests/unit/test_pipeline_llm.py` | ✅ Passed | — |
+| T-042 | Unit | BUILD GRAPH: deduplicate relationships | `backend/tests/unit/test_pipeline_build_graph.py` | ✅ Passed | — |
+| T-043 | Unit | BUILD GRAPH: cross-course topic aggregation | `backend/tests/unit/test_pipeline_build_graph.py` | ✅ Passed | — |
+| T-044 | Unit | STORE: upsert courses | `backend/tests/unit/test_pipeline_store.py` | ✅ Passed | — |
+| T-045 | Unit | STORE: upsert topic_graph | `backend/tests/unit/test_pipeline_store.py` | ✅ Passed | — |
+| T-046 | Unit | STORE: create sync_log entry | `backend/tests/unit/test_pipeline_store.py` | ✅ Passed | — |
+| T-047 | Integration | Full pipeline: mock GitHub → parse → mock LLM → store → verify DB | `backend/tests/integration/test_pipeline.py` | ✅ Passed | — |
+| T-048 | Integration | Idempotent sync: same SHA = no changes | `backend/tests/integration/test_pipeline.py` | ✅ Passed | — |
+| T-049 | Integration | Pipeline retry: failed step retries 3x | `backend/tests/integration/test_pipeline.py` | ✅ Passed | — |
 
 ---
 
@@ -115,3 +115,4 @@
 | Date | Phase | Change | Author |
 |------|-------|--------|--------|
 | — | 4 | Initial creation | — |
+| 2026-01-XX | 4 | Pipeline implemented, 16 tests passing, sync tested with 122 courses | — |

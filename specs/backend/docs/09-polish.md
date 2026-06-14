@@ -30,16 +30,16 @@
 
 | Test ID | Type | Test Case | File Path | Status | Notes |
 |---------|------|-----------|-----------|--------|-------|
-| T-111 | Integration | Auth protection: 401 without token on protected routes | `backend/tests/integration/test_auth_protection.py` | ⬜ | — |
-| T-112 | Integration | Auth protection: 200 with valid token | `backend/tests/integration/test_auth_protection.py` | ⬜ | — |
-| T-113 | Integration | Error handling: validation → 422 | `backend/tests/integration/test_error_handling.py` | ⬜ | — |
-| T-114 | Integration | Error handling: not found → 404 | `backend/tests/integration/test_error_handling.py` | ⬜ | — |
-| T-115 | Integration | Error handling: server error → 500 | `backend/tests/integration/test_error_handling.py` | ⬜ | — |
-| T-116 | Integration | Rate limiting: exceeds limit → 429 | `backend/tests/integration/test_rate_limit.py` | ⬜ | — |
-| T-117 | Integration | CORS: mobile origin allowed | `backend/tests/integration/test_cors.py` | ⬜ | — |
-| T-118 | Integration | Cron sync: triggers on new SHA | `backend/tests/integration/test_cron_sync.py` | ⬜ | — |
-| T-119 | Integration | Full test suite: all tests pass | `backend/tests/integration/test_full_suite.py` | ⬜ | — |
-| T-120 | Contract | API docs: OpenAPI spec matches all endpoints | `backend/tests/contract/test_openapi.py` | ⬜ | — |
+| T-111 | Integration | Auth protection: 401 without token on protected routes | `backend/tests/integration/test_auth_protection.py` | ✅ Passed | — |
+| T-112 | Integration | Auth protection: 200 with valid token | `backend/tests/integration/test_auth_protection.py` | ✅ Passed | — |
+| T-113 | Integration | Error handling: validation → 422 | `backend/tests/integration/test_error_handling.py` | ✅ Passed | — |
+| T-114 | Integration | Error handling: not found → 404 | `backend/tests/integration/test_error_handling.py` | ✅ Passed | — |
+| T-115 | Integration | Error handling: server error → 500 | `backend/tests/integration/test_error_handling.py` | ✅ Passed | — |
+| T-116 | Integration | Rate limiting: exceeds limit → 429 | `backend/tests/integration/test_rate_limit.py` | ✅ Passed | — |
+| T-117 | Integration | CORS: mobile origin allowed | `backend/tests/integration/test_cors.py` | ✅ Passed | — |
+| T-118 | Integration | Cron sync: triggers on new SHA | `backend/tests/integration/test_cron_sync.py` | ✅ Passed | — |
+| T-119 | Integration | Full test suite: all tests pass | `backend/tests/integration/test_full_suite.py` | ✅ Passed | — |
+| T-120 | Contract | API docs: OpenAPI spec matches all endpoints | `backend/tests/contract/test_openapi.py` | ✅ Passed | — |
 
 ---
 
@@ -79,4 +79,5 @@
 
 | Date | Phase | Change | Author |
 |------|-------|--------|--------|
+| 2026-01-XX | 9 | Rate limiting, CORS, logging, Docker, tests passing | — |
 | — | 9 | Initial creation | — |
