@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
     host: true, // Listen on all network interfaces
-    allowedHosts: true,
+    allowedHosts: ['.ngrok-free.dev', '.ngrok.io', 'moonbeam-viability-gratify.ngrok-free.dev'],
     proxy: {
       '/api': {
         target: 'http://localhost:8080',
