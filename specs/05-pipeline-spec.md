@@ -1,6 +1,6 @@
 # Content Pipeline Specification — GitHub Webhook → Knowledge Graph
 
-**Trigger:** GitHub webhook on push to `kamranahmedse/developer-roadmap`  
+**Trigger:** GitHub webhook on push to `nilbuild/developer-roadmap`  
 **Execution:** Deterministic async pipeline (no LLM at query time)  
 **LLM calls:** Only during sync (entity extraction, community summaries)  
 **LLM provider:** Zen API via Go subscription
@@ -41,7 +41,7 @@ async def fetch_content(payload: dict) -> FetchResult:
     if os.path.exists(repo_path):
         run(f"cd {repo_path} && git pull")
     else:
-        run(f"git clone --depth 1 https://github.com/kamranahmedse/developer-roadmap.git {repo_path}")
+        run(f"git clone --depth 1 https://github.com/nilbuild/developer-roadmap.git {repo_path}")
 
     return FetchResult(status="success", sha=new_sha, repo_path=repo_path)
 ```

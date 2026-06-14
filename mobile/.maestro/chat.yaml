@@ -1,0 +1,23 @@
+appId: com.enlightenment.mobile
+---
+- launchApp
+- waitForAnimationToEnd
+
+# Navigate to chat tab
+- tapOn: "Chat"
+- waitForAnimationToEnd
+
+# Verify chat screen loads
+- assertVisible:
+    text: "Type a message"
+
+# Type a message
+- tapOn: "Type a message"
+- inputText: "Hello, I need help with my course"
+
+# Send message
+- tapOn: "Send"
+
+# Verify message appears in chat
+- assertVisible:
+    text: "Hello, I need help with my course"

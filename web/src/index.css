@@ -1,0 +1,143 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #3b82f6;
+  --color-secondary: #10b981;
+}
+
+@keyframes drawEdge {
+  from {
+    stroke-dashoffset: 1000;
+    stroke-dasharray: 1000;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.edge-animate {
+  animation: drawEdge 1.5s ease-out forwards;
+}
+
+:root {
+  --cosmos: #0a0a1a;
+  --starlight: #00D4FF;
+  --nebula: #FF00FF;
+  --planet-surface: #1e1e38;
+  --text-main: #e0e0ff;
+  --text-muted: #8a8aab;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', 'Roboto', sans-serif;
+  background-color: var(--cosmos);
+  color: var(--text-main);
+  min-height: 100vh;
+}
+
+/* Star field background */
+.stars {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-image: 
+    radial-gradient(1px 1px at 20px 30px, #ffffff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 40px 70px, #ffffff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 50px 160px, #ffffff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 90px 40px, #ffffff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 130px 80px, #ffffff, rgba(0,0,0,0)),
+    radial-gradient(1px 1px at 160px 120px, #ffffff, rgba(0,0,0,0));
+  background-repeat: repeat;
+  background-size: 200px 200px;
+  animation: stars-move 100s linear infinite;
+  z-index: -1;
+  opacity: 0.6;
+}
+
+@keyframes stars-move {
+  from { background-position: 0 0; }
+  to { background-position: -1000px 500px; }
+}
+
+/* Layouts */
+.auth-layout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.auth-container {
+  width: 100%;
+  max-width: 400px;
+  padding: 20px;
+}
+
+/* Glassmorphism Box */
+.auth-box {
+  background: rgba(30, 30, 56, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(0, 212, 255, 0.2);
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  transition: transform 0.3s ease;
+}
+
+.auth-box h2 {
+  margin-top: 0;
+  text-align: center;
+  color: var(--starlight);
+  font-weight: 300;
+  letter-spacing: 1px;
+}
+
+/* Forms */
+input {
+  background: rgba(0, 0, 0, 0.2) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #fff !important;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+
+input:focus {
+  border-color: var(--starlight) !important;
+  box-shadow: 0 0 8px rgba(0, 212, 255, 0.3);
+}
+
+label {
+  display: block;
+  font-size: 0.9em;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+button[type="submit"] {
+  width: 100%;
+  background: linear-gradient(135deg, var(--starlight), #0077ff) !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 8px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  margin-top: 10px;
+}
+
+button[type="submit"]:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 212, 255, 0.4);
+}
+
+button[type="submit"]:active {
+  transform: translateY(0);
+}
+
+/* Google Button */
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

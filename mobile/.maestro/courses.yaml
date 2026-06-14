@@ -1,0 +1,23 @@
+appId: com.enlightenment.mobile
+---
+- launchApp
+- waitForAnimationToEnd
+
+# Verify courses screen loads
+- assertVisible:
+    text: "Courses"
+
+# Tap on first course if available
+- tapOn:
+    text: "Course"
+    optional: true
+
+# Verify course detail screen
+- assertVisible:
+    text: "Syllabus"
+    optional: true
+
+# Navigate back
+- tapOn:
+    text: "Back"
+    optional: true

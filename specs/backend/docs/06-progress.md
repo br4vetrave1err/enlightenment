@@ -22,12 +22,12 @@
 
 | Endpoint | Method | Status | Request Shape | Response Shape |
 |----------|--------|--------|---------------|----------------|
-| `/api/user/progress` | GET | ⬜ | — | `{ courses: [{ course_id, started_at, last_accessed, completed_nodes, current_node, time_spent_seconds, completion_percentage }] }` |
-| `/api/user/progress/{course_id}` | GET | ⬜ | — | Same as above for single course |
-| `/api/user/progress/{course_id}/node` | POST | ⬜ | `{ node_id, action, time_spent_seconds, self_rating }` | `{ status, completion_percentage }` |
-| `/api/user/progress/{course_id}/node/{node_id}` | PUT | ⬜ | `{ action, time_spent_seconds, self_rating }` | `{ status }` |
-| `/api/user/knowledge-profile` | GET | ⬜ | — | `{ topics: [{ name, mastery_level, sources, last_verified, status }], knowledge_gaps: [{ topic, recommended_course, recommended_node }], learning_velocity: { nodes_per_week, current_streak_days } }` |
-| `/api/user/learning-stats` | GET | ⬜ | — | `{ total_nodes_completed, courses_in_progress, current_streak_days, nodes_per_week, time_spent_total_hours, knowledge_gaps }` |
+| `/api/user/progress` | GET | ✅ Implemented | — | `{ courses: [{ course_id, started_at, last_accessed, completed_nodes, current_node, time_spent_seconds, completion_percentage }] }` |
+| `/api/user/progress/{course_id}` | GET | ✅ Implemented | — | Same as above for single course |
+| `/api/user/progress/{course_id}/node` | POST | ✅ Implemented | `{ node_id, action, time_spent_seconds, self_rating }` | `{ status, completion_percentage }` |
+| `/api/user/progress/{course_id}/node/{node_id}` | PUT | ✅ Implemented | `{ action, time_spent_seconds, self_rating }` | `{ status }` |
+| `/api/user/knowledge-profile` | GET | ✅ Implemented | — | `{ topics: [{ name, mastery_level, sources, last_verified, status }], knowledge_gaps: [{ topic, recommended_course, recommended_node }], learning_velocity: { nodes_per_week, current_streak_days } }` |
+| `/api/user/learning-stats` | GET | ✅ Implemented | — | `{ total_nodes_completed, courses_in_progress, current_streak_days, nodes_per_week, time_spent_total_hours, knowledge_gaps }` |
 
 ## Data Models
 
@@ -42,23 +42,23 @@
 
 | Test ID | Type | Test Case | File Path | Status | Notes |
 |---------|------|-----------|-----------|--------|-------|
-| T-062 | Contract | Progress update: 200 marks node complete | `backend/tests/contract/test_progress_update.py` | ⬜ | — |
-| T-063 | Contract | Progress update: updates time_spent | `backend/tests/contract/test_progress_update.py` | ⬜ | — |
-| T-064 | Contract | Progress update: updates self_rating | `backend/tests/contract/test_progress_update.py` | ⬜ | — |
-| T-065 | Contract | Node update: PUT changes rating | `backend/tests/contract/test_progress_node_update.py` | ⬜ | — |
-| T-066 | Contract | Progress list: returns all courses | `backend/tests/contract/test_progress_list.py` | ⬜ | — |
-| T-067 | Contract | Knowledge profile: returns topics with mastery | `backend/tests/contract/test_knowledge_profile.py` | ⬜ | — |
-| T-068 | Contract | Knowledge profile: returns knowledge_gaps | `backend/tests/contract/test_knowledge_profile.py` | ⬜ | — |
-| T-069 | Contract | Learning stats: returns all fields | `backend/tests/contract/test_learning_stats.py` | ⬜ | — |
-| T-070 | Unit | Mastery: base_score calculation | `backend/tests/unit/test_mastery.py` | ⬜ | — |
-| T-071 | Unit | Mastery: time_weight capped at 1.0 | `backend/tests/unit/test_mastery.py` | ⬜ | — |
-| T-072 | Unit | Mastery: verification_bonus max 1.3 | `backend/tests/unit/test_mastery.py` | ⬜ | — |
-| T-073 | Unit | Mastery: status mapping (new/learning/proficient/mastered) | `backend/tests/unit/test_mastery.py` | ⬜ | — |
-| T-074 | Unit | Knowledge gaps: identifies low-mastery topics | `backend/tests/unit/test_knowledge_gaps.py` | ⬜ | — |
-| T-075 | Unit | Knowledge gaps: recommends courses from topic_graph | `backend/tests/unit/test_knowledge_gaps.py` | ⬜ | — |
-| T-076 | Unit | Stats: nodes_per_week calculation | `backend/tests/unit/test_stats.py` | ⬜ | — |
-| T-077 | Unit | Stats: current_streak_days calculation | `backend/tests/unit/test_stats.py` | ⬜ | — |
-| T-078 | Integration | Progress flow: complete nodes → check profile → verify mastery → check stats | `backend/tests/integration/test_progress.py` | ⬜ | — |
+| T-062 | Contract | Progress update: 200 marks node complete | `backend/tests/contract/test_progress_update.py` | ✅ Passed | — |
+| T-063 | Contract | Progress update: updates time_spent | `backend/tests/contract/test_progress_update.py` | ✅ Passed | — |
+| T-064 | Contract | Progress update: updates self_rating | `backend/tests/contract/test_progress_update.py` | ✅ Passed | — |
+| T-065 | Contract | Node update: PUT changes rating | `backend/tests/contract/test_progress_node_update.py` | ✅ Passed | — |
+| T-066 | Contract | Progress list: returns all courses | `backend/tests/contract/test_progress_list.py` | ✅ Passed | — |
+| T-067 | Contract | Knowledge profile: returns topics with mastery | `backend/tests/contract/test_knowledge_profile.py` | ✅ Passed | — |
+| T-068 | Contract | Knowledge profile: returns knowledge_gaps | `backend/tests/contract/test_knowledge_profile.py` | ✅ Passed | — |
+| T-069 | Contract | Learning stats: returns all fields | `backend/tests/contract/test_learning_stats.py` | ✅ Passed | — |
+| T-070 | Unit | Mastery: base_score calculation | `backend/tests/unit/test_mastery.py` | ✅ Passed | — |
+| T-071 | Unit | Mastery: time_weight capped at 1.0 | `backend/tests/unit/test_mastery.py` | ✅ Passed | — |
+| T-072 | Unit | Mastery: verification_bonus max 1.3 | `backend/tests/unit/test_mastery.py` | ✅ Passed | — |
+| T-073 | Unit | Mastery: status mapping (new/learning/proficient/mastered) | `backend/tests/unit/test_mastery.py` | ✅ Passed | — |
+| T-074 | Unit | Knowledge gaps: identifies low-mastery topics | `backend/tests/unit/test_knowledge_gaps.py` | ✅ Passed | — |
+| T-075 | Unit | Knowledge gaps: recommends courses from topic_graph | `backend/tests/unit/test_knowledge_gaps.py` | ✅ Passed | — |
+| T-076 | Unit | Stats: nodes_per_week calculation | `backend/tests/unit/test_stats.py` | ✅ Passed | — |
+| T-077 | Unit | Stats: current_streak_days calculation | `backend/tests/unit/test_stats.py` | ✅ Passed | — |
+| T-078 | Integration | Progress flow: complete nodes → check profile → verify mastery → check stats | `backend/tests/integration/test_progress.py` | ✅ Passed | — |
 
 ---
 
@@ -93,10 +93,10 @@
 
 | Mobile Endpoint | Backend Status | Notes |
 |-----------------|----------------|-------|
-| `POST /api/user/progress/{cid}/node` | ⬜ | Matches mobile request shape |
-| `GET /api/user/learning-stats` | ⬜ | Matches mobile LearningStats interface |
-| `GET /api/user/knowledge-profile` | ⬜ | Matches mobile KnowledgeProfile interface |
-| Mastery levels | ⬜ | Mobile displays as "new\|learning\|proficient\|mastered" |
+| `POST /api/user/progress/{cid}/node` | ✅ Implemented | Matches mobile request shape |
+| `GET /api/user/learning-stats` | ✅ Implemented | Matches mobile LearningStats interface |
+| `GET /api/user/knowledge-profile` | ✅ Implemented | Matches mobile KnowledgeProfile interface |
+| Mastery levels | ✅ Implemented | Mobile displays as "new\|learning\|proficient\|mastered" |
 
 ---
 
@@ -104,4 +104,5 @@
 
 | Date | Phase | Change | Author |
 |------|-------|--------|--------|
+| 2026-01-XX | 6 | Progress tracking implemented, tests passing | — |
 | — | 6 | Initial creation | — |

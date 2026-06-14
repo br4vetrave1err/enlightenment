@@ -36,15 +36,15 @@
 
 | Test ID | Type | Test Case | File Path | Status | Notes |
 |---------|------|-----------|-----------|--------|-------|
-| T-004 | Unit | Password: hash produces non-plain text | `backend/tests/unit/test_password.py` | ⬜ | — |
-| T-005 | Unit | Password: verify correct password | `backend/tests/unit/test_password.py` | ⬜ | — |
-| T-006 | Unit | Password: verify wrong password fails | `backend/tests/unit/test_password.py` | ⬜ | — |
-| T-007 | Unit | JWT: create and decode valid token | `backend/tests/unit/test_jwt.py` | ⬜ | — |
-| T-008 | Unit | JWT: expired token raises error | `backend/tests/unit/test_jwt.py` | ⬜ | — |
-| T-009 | Unit | JWT: invalid signature raises error | `backend/tests/unit/test_jwt.py` | ⬜ | — |
-| T-010 | Unit | OAuth: generates valid auth URL | `backend/tests/unit/test_oauth.py` | ⬜ | — |
-| T-011 | Contract | Error middleware returns ApiError format | `backend/tests/contract/test_errors.py` | ⬜ | — |
-| T-012 | Integration | DB indexes created on startup | `backend/tests/integration/test_db_indexes.py` | ⬜ | — |
+| T-004 | Unit | Password: hash produces non-plain text | `backend/tests/unit/test_password.py` | ✅ Passed | — |
+| T-005 | Unit | Password: verify correct password | `backend/tests/unit/test_password.py` | ✅ Passed | — |
+| T-006 | Unit | Password: verify wrong password fails | `backend/tests/unit/test_password.py` | ✅ Passed | — |
+| T-007 | Unit | JWT: create and decode valid token | `backend/tests/unit/test_jwt.py` | ✅ Passed | — |
+| T-008 | Unit | JWT: expired token raises error | `backend/tests/unit/test_jwt.py` | ✅ Passed | — |
+| T-009 | Unit | JWT: invalid signature raises error | `backend/tests/unit/test_jwt.py` | ✅ Passed | — |
+| T-010 | Unit | OAuth: generates valid auth URL | `backend/tests/unit/test_oauth.py` | ✅ Passed | — |
+| T-011 | Contract | Error middleware returns ApiError format | `backend/tests/contract/test_errors.py` | ✅ Passed | — |
+| T-012 | Integration | DB indexes created on startup | `backend/tests/integration/test_db_indexes.py` | ✅ Passed | — |
 
 ---
 
@@ -83,3 +83,4 @@
 | Date | Phase | Change | Author |
 |------|-------|--------|--------|
 | — | 2 | Initial creation | — |
+| 2026-01-XX | 2 | Password hashing, OAuth, error middleware, DB indexes implemented | — |

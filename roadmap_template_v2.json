@@ -1,0 +1,174 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "roadmap-template/v2",
+  "title": "Learning Roadmap Template",
+  "description": "Backend-agnostic schema for generating course roadmaps like roadmap.sh. v2 — content and progress fully separated.",
+  "_docs": {
+    "files": {
+      "roadmap.json":       "Pure content definition — cacheable, user-agnostic. This file.",
+      "user_progress.json": "User-specific state — stored separately per user_id + roadmap_id."
+    },
+    "key_concepts": {
+      "topic_graph":   "All dependency edges live in roadmap.topic_graph[], NOT inside each topic.",
+      "variants":      "Learning path variants let users skip known phases/topics. Defined in roadmap.variants[].",
+      "resources":     "Each topic carries a rich resources[] array with quality, duration, and verification metadata."
+    }
+  },
+
+
+  "roadmap": {
+
+    "_comment": "── IDENTITY ──────────────────────────────────────────────",
+    "id":          "string | uuid  — globally unique e.g. 'a1b2c3d4-...'",
+    "slug":        "string         — URL-safe e.g. 'frontend-developer'",
+    "title":       "string         — display name e.g. 'Frontend Developer'",
+    "description": "string         — 1–2 sentence summary of what this roadmap covers",
+    "roadmap_type":"role | skill | tool | certification",
+    "version":     "string         — semver e.g. '2.0.0'",
+    "created_at":  "ISO 8601 datetime",
+    "updated_at":  "ISO 8601 datetime",
+
+    "_comment2": "── META / DISCOVERY ──────────────────────────────────────",
+    "meta": {
+      "level":          "beginner | intermediate | advanced",
+      "total_duration": "string  — e.g. '6–9 months'",
+      "total_phases":   "integer — computed from phases[]",
+      "total_topics":   "integer — computed from all phases[].topics[]",
+      "tags":           ["web", "javascript", "..."],
+      "prerequisites":  ["roadmap-slug-or-free-text", "..."]
+    },
+
+
+    "_comment3": "── PHASES (content only, no user state) ──────────────────",
+    "phases": [
+      {
+        "id":          "string | uuid",
+        "order":       "integer — 1-based",
+        "name":        "string  — e.g. 'Foundations'",
+        "description": "string  — 1 sentence about what this phase covers",
+        "duration":    "string  — e.g. '4–6 weeks'",
+
+        "topics": [
+          {
+            "_comment": "No 'status' field here — status lives in user_progress.json only",
+            "id":              "string | uuid",
+            "order":           "integer — position within the phase",
+            "name":            "string  — e.g. 'HTML Basics'",
+            "description":     "string  — what the learner will be able to do after completing this",
+            "type":            "core | optional | tool | project",
+            "difficulty":      "easy | medium | hard",
+            "estimated_hours": "integer",
+            "tags":            ["html", "markup", "..."],
+
+            "_comment2": "── RICH RESOURCES ──────────────────────────────",
+            "resources": [
+              {
+                "id":               "string | uuid",
+                "title":            "string",
+                "url":              "string | null",
+                "type":             "article | video | book | course | docs | practice | podcast",
+                "free":             "boolean",
+                "duration_minutes": "integer | null  — null for books/articles without a fixed read time",
+                "quality_score":    "float 0.0–5.0   — community or editorial rating",
+                "verified":         "boolean         — manually reviewed by maintainers",
+                "added_at":         "ISO 8601 datetime",
+                "language":         "string          — ISO 639-1 e.g. 'en', 'hi', 'es'"
+              }
+            ]
+          }
+        ],
+
+        "milestone": {
+          "title":       "string — e.g. 'Build a static webpage'",
+          "description": "string — what the learner produces or demonstrates at phase end",
+          "type":        "project | quiz | portfolio | certification"
+        }
+      }
+    ],
+
+
+    "_comment4": "── TOPIC GRAPH (relationship modeling) ───────────────────",
+    "_docs_graph": {
+      "purpose": "Edges are stored here globally, NOT inside each topic, so you can traverse the full graph without loading every topic object.",
+      "types": {
+        "required":     "Learner MUST complete 'from' before unlocking 'to'",
+        "recommended":  "Completing 'from' before 'to' is strongly advised but not enforced",
+        "alternative":  "'from' and 'to' are interchangeable — learner only needs one"
+      }
+    },
+    "topic_graph": [
+      {
+        "from": "topic-uuid-a  — source topic id",
+        "to":   "topic-uuid-b  — target topic id",
+        "type": "required | recommended | alternative"
+      }
+    ],
+
+
+    "_comment5": "── LEARNING PATH VARIANTS ────────────────────────────────",
+    "_docs_variants": {
+      "purpose": "Variants let users skip phases or topics they already know, creating a personalised fast-track without duplicating the roadmap definition.",
+      "usage":   "Present variants at roadmap start as a short quiz or a checklist. Apply the matching variant's skip lists to filter phases[]/topics[] before rendering."
+    },
+    "variants": [
+      {
+        "id":           "string | uuid",
+        "label":        "string — short display name e.g. 'I already know JavaScript'",
+        "description":  "string — who this variant is for",
+        "skip_phases":  ["phase-uuid-1", "..."],
+        "skip_topics":  ["topic-uuid-a", "topic-uuid-b", "..."],
+        "unlocks_at":   "string | null — slug of phase/topic where this variant's path rejoins the main roadmap"
+      }
+    ]
+
+  },
+
+
+  "_separator": "════════════════════════════════════════════════════════════════",
+  "_separator_label": "USER PROGRESS — stored in a separate document / DB table",
+  "_separator2": "════════════════════════════════════════════════════════════════",
+
+
+  "user_progress": {
+
+    "_comment": "── IDENTITY ──────────────────────────────────────────────",
+    "user_id":    "string | uuid — foreign key to your auth system",
+    "roadmap_id": "string | uuid — foreign key to roadmap.id",
+    "roadmap_version": "string  — semver snapshot this progress record was created against",
+    "variant_id": "string | uuid | null — which variant the user chose, null = default path",
+
+    "_comment2": "── AGGREGATE STATS ───────────────────────────────────────",
+    "percent_complete":  "float 0.0–100.0",
+    "started_at":        "ISO 8601 datetime | null",
+    "last_activity_at":  "ISO 8601 datetime | null",
+    "estimated_completion": "ISO 8601 date | null — projected finish date based on pace",
+
+    "_comment3": "── PER-TOPIC STATE ───────────────────────────────────────",
+    "topics": [
+      {
+        "topic_id":    "string | uuid — foreign key to roadmap topic id",
+        "status":      "not_started | in_progress | done | skipped",
+        "started_at":  "ISO 8601 datetime | null",
+        "done_at":     "ISO 8601 datetime | null",
+        "note":        "string | null — learner's personal note on this topic",
+        "resource_interactions": [
+          {
+            "resource_id": "string | uuid — foreign key to topic resource id",
+            "action":      "opened | bookmarked | completed",
+            "at":          "ISO 8601 datetime"
+          }
+        ]
+      }
+    ],
+
+    "_comment4": "── MILESTONE COMPLETIONS ─────────────────────────────────",
+    "milestones": [
+      {
+        "phase_id":    "string | uuid",
+        "completed_at":"ISO 8601 datetime",
+        "artifact_url":"string | null — link to submitted project, portfolio piece, etc."
+      }
+    ]
+
+  }
+}

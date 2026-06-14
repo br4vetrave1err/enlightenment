@@ -1,0 +1,45 @@
+{
+  "user_progress": {
+    "user_id": "user-123",
+    "roadmap_id": "frontend-dev",
+    "roadmap_version": "2.0.0",
+    "variant_id": null,
+    "percent_complete": 33.3,
+    "started_at": "2026-06-01T00:00:00Z",
+    "last_activity_at": "2026-06-13T00:00:00Z",
+    "estimated_completion": "2026-12-01T00:00:00Z",
+    "topics": [
+      {
+        "topic_id": "dns",
+        "status": "done",
+        "started_at": "2026-06-01T00:00:00Z",
+        "done_at": "2026-06-05T00:00:00Z",
+        "note": "DNS is just a phonebook",
+        "resource_interactions": [
+          {
+            "resource_id": "res-1",
+            "action": "completed",
+            "at": "2026-06-05T00:00:00Z"
+          }
+        ]
+      },
+      {
+        "topic_id": "html",
+        "status": "in_progress",
+        "started_at": "2026-06-10T00:00:00Z",
+        "done_at": null,
+        "note": null,
+        "resource_interactions": []
+      },
+      {
+        "topic_id": "css",
+        "status": "not_started",
+        "started_at": null,
+        "done_at": null,
+        "note": null,
+        "resource_interactions": []
+      }
+    ],
+    "milestones": []
+  }
+}

@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, StyleSheet, Pressable } from 'react-native'
+import { Text, StyleSheet, Pressable, View } from 'react-native'
 import Animated, {
   useSharedValue,
   useAnimatedStyle,
@@ -33,6 +33,11 @@ const variantStyles = {
     background: 'transparent',
     text: spaceColors.starlightMuted,
     glow: 'transparent',
+  },
+  outline: {
+    background: 'transparent',
+    text: spaceColors.starlight,
+    glow: spaceColors.nebulaBlue,
   },
 }
 

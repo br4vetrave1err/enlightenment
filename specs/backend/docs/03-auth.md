@@ -19,12 +19,12 @@
 
 | Endpoint | Method | Status | Request Shape | Response Shape |
 |----------|--------|--------|---------------|----------------|
-| `/api/auth/register` | POST | ⬜ | `{ email, password, display_name }` | `{ access_token, refresh_token, user }` |
-| `/api/auth/login` | POST | ⬜ | `{ email, password }` | `{ access_token, refresh_token, user }` |
-| `/api/auth/google` | POST | ⬜ | — | `{ auth_url }` |
-| `/api/auth/google/callback` | POST | ⬜ | `{ code, state }` | `{ access_token, refresh_token, user }` |
-| `/api/auth/refresh` | POST | ⬜ | `{ refresh_token }` | `{ access_token, refresh_token }` |
-| `/api/auth/logout` | POST | ⬜ | — | `{ status: "ok" }` |
+| `/api/auth/register` | POST | ✅ Implemented | `{ email, password, display_name }` | `{ access_token, refresh_token, user }` |
+| `/api/auth/login` | POST | ✅ Implemented | `{ email, password }` | `{ access_token, refresh_token, user }` |
+| `/api/auth/google` | POST | ✅ Implemented | — | `{ auth_url }` |
+| `/api/auth/google/callback` | POST | ✅ Implemented | `{ code, state }` | `{ access_token, refresh_token, user }` |
+| `/api/auth/refresh` | POST | ✅ Implemented | `{ refresh_token }` | `{ access_token, refresh_token }` |
+| `/api/auth/logout` | POST | ✅ Implemented | — | `{ status: "ok" }` |
 
 ## Data Models
 
@@ -41,22 +41,22 @@
 
 | Test ID | Type | Test Case | File Path | Status | Notes |
 |---------|------|-----------|-----------|--------|-------|
-| T-013 | Contract | Register: 201 with tokens + user | `backend/tests/contract/test_auth_register.py` | ⬜ | — |
-| T-014 | Contract | Register: 409 duplicate email | `backend/tests/contract/test_auth_register.py` | ⬜ | — |
-| T-015 | Contract | Register: 422 invalid email format | `backend/tests/contract/test_auth_register.py` | ⬜ | — |
-| T-016 | Contract | Register: 422 password < 8 chars | `backend/tests/contract/test_auth_register.py` | ⬜ | — |
-| T-017 | Contract | Login: 200 with tokens | `backend/tests/contract/test_auth_login.py` | ⬜ | — |
-| T-018 | Contract | Login: 401 wrong password | `backend/tests/contract/test_auth_login.py` | ⬜ | — |
-| T-019 | Contract | Login: 401 nonexistent email | `backend/tests/contract/test_auth_login.py` | ⬜ | — |
-| T-020 | Contract | Refresh: 200 new token pair | `backend/tests/contract/test_auth_refresh.py` | ⬜ | — |
-| T-021 | Contract | Refresh: 401 invalid token | `backend/tests/contract/test_auth_refresh.py` | ⬜ | — |
-| T-022 | Contract | Refresh: 401 expired token | `backend/tests/contract/test_auth_refresh.py` | ⬜ | — |
-| T-023 | Contract | Logout: 200 revokes token | `backend/tests/contract/test_auth_logout.py` | ⬜ | — |
-| T-024 | Contract | Logout: 401 without auth header | `backend/tests/contract/test_auth_logout.py` | ⬜ | — |
-| T-025 | Contract | Google: 200 returns auth_url | `backend/tests/contract/test_auth_google.py` | ⬜ | — |
-| T-026 | Contract | Google callback: 200 with tokens | `backend/tests/contract/test_auth_google.py` | ⬜ | — |
-| T-027 | Integration | Full auth flow: register → login → refresh → logout | `backend/tests/integration/test_auth_flow.py` | ⬜ | — |
-| T-028 | Integration | Google OAuth flow: get URL → callback → login | `backend/tests/integration/test_auth_google_flow.py` | ⬜ | — |
+| T-013 | Contract | Register: 201 with tokens + user | `backend/tests/contract/test_auth_register.py` | ✅ Passed | — |
+| T-014 | Contract | Register: 409 duplicate email | `backend/tests/contract/test_auth_register.py` | ✅ Passed | — |
+| T-015 | Contract | Register: 422 invalid email format | `backend/tests/contract/test_auth_register.py` | ✅ Passed | — |
+| T-016 | Contract | Register: 422 password < 8 chars | `backend/tests/contract/test_auth_register.py` | ✅ Passed | — |
+| T-017 | Contract | Login: 200 with tokens | `backend/tests/contract/test_auth_login.py` | ✅ Passed | — |
+| T-018 | Contract | Login: 401 wrong password | `backend/tests/contract/test_auth_login.py` | ✅ Passed | — |
+| T-019 | Contract | Login: 401 nonexistent email | `backend/tests/contract/test_auth_login.py` | ✅ Passed | — |
+| T-020 | Contract | Refresh: 200 new token pair | `backend/tests/contract/test_auth_refresh.py` | ✅ Passed | — |
+| T-021 | Contract | Refresh: 401 invalid token | `backend/tests/contract/test_auth_refresh.py` | ✅ Passed | — |
+| T-022 | Contract | Refresh: 401 expired token | `backend/tests/contract/test_auth_refresh.py` | ✅ Passed | — |
+| T-023 | Contract | Logout: 200 revokes token | `backend/tests/contract/test_auth_logout.py` | ✅ Passed | — |
+| T-024 | Contract | Logout: 401 without auth header | `backend/tests/contract/test_auth_logout.py` | ✅ Passed | — |
+| T-025 | Contract | Google: 200 returns auth_url | `backend/tests/contract/test_auth_google.py` | ✅ Passed | — |
+| T-026 | Contract | Google callback: 200 with tokens | `backend/tests/contract/test_auth_google.py` | ✅ Passed | — |
+| T-027 | Integration | Full auth flow: register → login → refresh → logout | `backend/tests/integration/test_auth_flow.py` | ✅ Passed | — |
+| T-028 | Integration | Google OAuth flow: get URL → callback → login | `backend/tests/integration/test_auth_google_flow.py` | ✅ Passed | — |
 
 ---
 
@@ -89,12 +89,12 @@
 
 | Mobile Endpoint | Backend Status | Notes |
 |-----------------|----------------|-------|
-| `POST /api/auth/register` | ⬜ | Matches mobile spec exactly |
-| `POST /api/auth/login` | ⬜ | Matches mobile spec exactly |
-| `POST /api/auth/google` | ⬜ | Returns auth_url for browser open |
-| `POST /api/auth/google/callback` | ⬜ | Accepts code + state from mobile |
-| `POST /api/auth/refresh` | ⬜ | Token rotation for auto-refresh |
-| `POST /api/auth/logout` | ⬜ | Clears tokens on mobile SecureStore |
+| `POST /api/auth/register` | ✅ Implemented | Matches mobile spec exactly |
+| `POST /api/auth/login` | ✅ Implemented | Matches mobile spec exactly |
+| `POST /api/auth/google` | ✅ Implemented | Returns auth_url for browser open |
+| `POST /api/auth/google/callback` | ✅ Implemented | Accepts code + state from mobile |
+| `POST /api/auth/refresh` | ✅ Implemented | Token rotation for auto-refresh |
+| `POST /api/auth/logout` | ✅ Implemented | Clears tokens on mobile SecureStore |
 
 ---
 
@@ -103,3 +103,4 @@
 | Date | Phase | Change | Author |
 |------|-------|--------|--------|
 | — | 3 | Initial creation | — |
+| 2026-01-XX | 3 | All auth endpoints implemented, 16 tests passing | — |

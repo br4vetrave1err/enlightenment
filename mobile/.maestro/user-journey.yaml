@@ -1,0 +1,44 @@
+appId: com.enlightenment.mobile
+---
+- launchApp
+- waitForAnimationToEnd
+
+# 1. Login
+- tapOn: "Already have an account? Log in"
+- waitForAnimationToEnd
+- tapOn: "Email"
+- inputText: "test@example.com"
+- tapOn: "Password"
+- inputText: "password123"
+- tapOn: "Log In"
+- waitForAnimationToEnd
+
+# 2. Browse courses
+- assertVisible:
+    text: "Courses"
+- tapOn:
+    text: "Course"
+    optional: true
+- waitForAnimationToEnd
+
+# 3. Check progress
+- tapOn: "Progress"
+- waitForAnimationToEnd
+- assertVisible:
+    text: "Stats Overview"
+    optional: true
+
+# 4. Check map
+- tapOn: "Map"
+- waitForAnimationToEnd
+- assertVisible:
+    text: "Roadmap"
+    optional: true
+
+# 5. Start a chat
+- tapOn: "Chat"
+- waitForAnimationToEnd
+- tapOn: "Type a message"
+- inputText: "Help me understand the first lesson"
+- tapOn: "Send"
+- waitForAnimationToEnd

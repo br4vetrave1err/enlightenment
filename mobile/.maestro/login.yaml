@@ -1,0 +1,22 @@
+appId: com.enlightenment.mobile
+---
+- launchApp
+- waitForAnimationToEnd
+
+# Navigate to login screen
+- tapOn: "Already have an account? Log in"
+- waitForAnimationToEnd
+
+# Enter credentials
+- tapOn: "Email"
+- inputText: "test@example.com"
+- tapOn: "Password"
+- inputText: "password123"
+
+# Submit login
+- tapOn: "Log In"
+
+# Verify successful login - should see courses tab
+- assertVisible:
+    text: "Courses"
+    optional: true

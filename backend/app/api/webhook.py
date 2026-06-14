@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, HTTPException
+from fastapi import APIRouter, Request, HTTPException, BackgroundTasks
 import hashlib
 import hmac
 
@@ -8,8 +8,7 @@ router = APIRouter()
 
 
 @router.post("/github")
-async def github_webhook(request: Request):
-    # Verify signature
+async def github_webhook(request: Request, background_tasks: BackgroundTasks):
     signature = request.headers.get("X-Hub-Signature-256", "")
     body = await request.body()
 
@@ -25,11 +24,18 @@ async def github_webhook(request: Request):
 
     payload = await request.json()
 
-    # Only process pushes to master
-    if payload.get("ref") != "refs/heads/master":
-        return {"status": "ignored", "reason": "not master branch"}
+    # Ping event from GitHub — no signature, just confirm connectivity
+    if payload.get("zen"):
+        return {"status": "pong"}
 
-    # Trigger pipeline in background
-    # TODO: await run_pipeline(triggered_by="webhook", payload=payload)
+    if payload.get("ref") not in ("refs/heads/main", "refs/heads/master"):
+        return {"status": "ignored", "reason": "not master or main branch"}
 
-    return {"status": "accepted"}
+    # Get previous SHA from last sync to enable incremental fetching
+    latest = await request.app.db.sync_log.find_one(sort=[("started_at", -1)])
+    previous_sha = latest.get("github_sha") if latest else None
+
+    from app.pipeline.orchestrator import run_pipeline
+    background_tasks.add_task(run_pipeline, request.app.db, "webhook", previous_sha)
+
+    return {"status": "sync_triggered", "sha": payload.get("after", "unknown")}
